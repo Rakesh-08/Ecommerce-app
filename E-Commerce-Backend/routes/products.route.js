@@ -4,9 +4,13 @@ let productController = require('../controller/product.controller')
 
 productsRouter.get("/", productController.getAllProducts)
 
+productsRouter.get("/:productId", productController.getSelectedProduct);
 
-productsRouter.get("/:productId", productController.getSelectedProduct)
+productsRouter.post("/", productController.addNewProduct);
 
+productsRouter.delete("/:productId", productController.deleteProductById)
+
+productsRouter.put("/:productId", productController.updateProductById)
 
 
 

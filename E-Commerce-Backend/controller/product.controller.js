@@ -69,10 +69,52 @@ let getSelectedProduct = async (req, res, next) => {
 
 //createProductsTable();
 
+let addNewProduct = async (req, res, next) => {
+    let productToBeAdded = req.body;
+
+    await ProductsModel.create(
+        productToBeAdded
+    )
+
+res.status(201).send('product added in the table')
+    res.end()
+
+}
+
+let deleteProductById = async (req, res, next) => {
+  let  productToBeDeleted = req.params.productId;
+
+    await ProductsModel.destroy({
+        where: {
+            id: productToBeDeleted
+        }
+    })
+
+    res.status(200).send('product removed from table')
+    res.end()
+}
+
+let updateProductById = async (req, res, next) => {
+    let id = req.params.productId;
+    let contentToBeUpdated = req.body;
+
+    await ProductsModel.update(contentToBeUpdated, {
+        where: {
+            id:id
+        }
+    })
+
+    res.send('product details updated').status(200);
+    res.end();
+}
+
 module.exports = {
 
     getAllProducts,
-    getSelectedProduct
+    getSelectedProduct,
+    addNewProduct,
+    deleteProductById,
+    updateProductById
 }
 
 

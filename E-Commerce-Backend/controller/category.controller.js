@@ -72,4 +72,26 @@ let deleteCategoryById = async (req, res, next) => {
 }
 
 
-module.exports = { getAllCategories, getCategoryById, addNewCategory , deleteCategoryById }
+let updateCategoryById = async (req, res, next) => {
+    let id = req.params.categoryId;
+    let contentToBeUpdated = req.body;
+
+   let updated=  await CategoryModel.update(contentToBeUpdated, {
+        where: {
+            id:id
+        }
+   })
+    
+    let updatedCategory = await CategoryModel.findByPk(id)
+    
+    res.send(updatedCategory).status(200)
+    res.end();
+    
+   
+    
+
+
+    
+}
+
+module.exports = { getAllCategories, getCategoryById, addNewCategory , deleteCategoryById , updateCategoryById }
