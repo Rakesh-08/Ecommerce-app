@@ -12,8 +12,10 @@ let CategoryModel = sequelizeConnection.define("categories", {
         notNull: true,
         type: sequelize.DataTypes.STRING
     }
+}, {
+    timestamps: false
 }
-) 
+)
 
 module.exports = CategoryModel;
 

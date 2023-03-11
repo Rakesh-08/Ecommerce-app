@@ -1,27 +1,17 @@
-let express = require('express'); 
+let express = require('express');
 let router = express.Router();
-let categoryController = require("../controller/category.controller");
-let productController = require('../controller/product.controller')
-
+let categoriesRoute = require('./categories.route')
+let productesRoute = require('./products.route')
 
 router.get("/", (req, res, next) => {
-   res.write('This is home page of app');
+    res.write('This is home page of app');
     res.end()
-    
+
 })
 
-
-router.get("/categories",categoryController.getAllCategories  )
-
-
-router.get("/categories/:categoryId",categoryController.getCategoryById )
-
-
-router.get("/products",productController.getAllProducts )
-
-
-router.get("/products/:productId", productController.getSelectedProduct)
-
+router.use('/categories', categoriesRoute);
+router.use('/products', productesRoute)
 
 
 module.exports = router;
+
