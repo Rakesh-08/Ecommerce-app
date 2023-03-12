@@ -9,8 +9,8 @@ router.get("/", (req, res, next) => {
 
 })
 
-router.use('/categories', categoriesRoute);
-router.use('/products', productesRoute)
+router.use('/ecomm/api/v1/categories', categoriesRoute);
+router.use('/ecomm/api/v1/products', productesRoute)
 
 
 module.exports = router;

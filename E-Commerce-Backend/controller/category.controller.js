@@ -1,97 +1,107 @@
-let CategoryModel = require('../model/Category')
-let sequelizeConnection = require('../config/db.config');
-
+let CategoryModel = require("../model/Category");
+let sequelizeConnection = require("../config/db.config");
 
 let createCategoryTable = async () => {
-    await sequelizeConnection.sync({ force: true });
+  await sequelizeConnection.sync({ force: true });
 
-    insertIntoCategoryTable();
-}
+  insertIntoCategoryTable();
+};
 
 let insertIntoCategoryTable = async () => {
-    await CategoryModel.bulkCreate([
-        { name: 'Fashion' },
-        { name: 'Mobiles' },
-        { name: 'Electronics' },
-        { name: 'Furniture' },
-        { name: 'Appliances' },
-    ])
-}
+  await CategoryModel.bulkCreate([
+    { name: "Fashion" },
+    { name: "Mobiles" },
+    { name: "Electronics" },
+    { name: "Furniture" },
+    { name: "Appliances" },
+  ]);
+};
 
 let getAllCategories = async (req, res, next) => {
-    let categories = await CategoryModel.findAll()
-    res.writeHead(200, { 'content-Type': 'application/json' })
-    res.write(JSON.stringify(categories))
-    res.end();
-}
+  let categories = await CategoryModel.findAll();
+  res.writeHead(200, { "content-Type": "application/json" });
+  res.write(JSON.stringify(categories));
+  res.end();
+};
 
 let getCategoryById = async (req, res, next) => {
+  let id = req.params.categoryId;
+  if (!id) {
+    res.status(400).send("ID not passed");
+    return;
+  }
 
-    let id = req.params.categoryId;
-    if (!id) {
-        res.status(400).send("ID not passed")
-        return
-    }
-
-    let newCategory = await CategoryModel.findAll({
-        where: {
-            id: id
-        }
-    })
-    res.writeHead(200, { 'content-Type': 'application/json' })
-    res.write(JSON.stringify(newCategory))
-    res.end()
-}
+  let newCategory = await CategoryModel.findAll({
+    where: {
+      id: id,
+    },
+  });
+  res.writeHead(200, { "content-Type": "application/json" });
+  res.write(JSON.stringify(newCategory));
+  res.end();
+};
 
 //createCategoryTable();
 
-
 let addNewCategory = async (req, res, next) => {
-    let categoryToBeAdded = req.body.name
+  let categoryToBeAdded = req.body;
 
-    await CategoryModel.create({
-        name: categoryToBeAdded
-    })
+    await CategoryModel.create(categoryToBeAdded);
 
-    res.status(201).send('new category added successfully')
-    res.end()
-}
-
+  res.status(201).send("new category added successfully");
+  res.end();
+};
 
 let deleteCategoryById = async (req, res, next) => {
-    let CategoryidToBeDeleted = req.params.categoryId
-    
-    await CategoryModel.destroy({
-        where: {
-            id:CategoryidToBeDeleted
-        }
-    })
+  let CategoryidToBeDeleted = req.params.categoryId;
 
-    res.status(200).send('Above category is removed')
-    res.end()
-}
+  await CategoryModel.destroy({
+    where: {
+      id: CategoryidToBeDeleted,
+    },
+  });
 
+  res.status(200).send("Above category is removed");
+  res.end();
+};
 
 let updateCategoryById = async (req, res, next) => {
-    let id = req.params.categoryId;
-    let contentToBeUpdated = req.body;
+    try {
+        let id = req.params.categoryId;
+        let contentToBeUpdated = req.body;
 
-   let updated=  await CategoryModel.update(contentToBeUpdated, {
-        where: {
-            id:id
-        }
-   })
-    
-    let updatedCategory = await CategoryModel.findByPk(id)
-    
-    res.send(updatedCategory).status(200)
-    res.end();
-    
-   
-    
+        // if (!contentToBeUpdated.name) {
+        //     res.status(500).send('please pass the data for category to be updated')
+        //     res.end();
 
+        // }
 
-    
+        await CategoryModel.update({ name: contentToBeUpdated } , {
+            where: {
+                id: id,
+            },
+        });
+
+        let updatedCategory = await CategoryModel.findByPk(id);
+        res.send(updatedCategory).status(200);
+        res.end();
+
+    } catch (err) {
+        
+        next(err);
+        
+    } 
+ 
+ 
+ 
+};
+
+let CrudOnCategories = {
+    getAllCategories,
+    getCategoryById,
+    addNewCategory,
+    deleteCategoryById,
+    updateCategoryById,
 }
 
-module.exports = { getAllCategories, getCategoryById, addNewCategory , deleteCategoryById , updateCategoryById }
+module.exports = CrudOnCategories;

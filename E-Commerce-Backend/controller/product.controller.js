@@ -76,22 +76,30 @@ let addNewProduct = async (req, res, next) => {
         productToBeAdded
     )
 
-res.status(201).send('product added in the table')
+    res.status(201).send('product added in the table')
     res.end()
 
 }
 
 let deleteProductById = async (req, res, next) => {
-  let  productToBeDeleted = req.params.productId;
+    let productToBeDeleted = req.params.productId;
+    let IsProductThere = await ProductsModel.findByPk(productToBeDeleted);
 
-    await ProductsModel.destroy({
-        where: {
-            id: productToBeDeleted
+    try {
+        if (!IsProductThere) {
+            throw new Error("Category not found")
         }
-    })
+        await ProductsModel.destroy({
+            where: {
+                id: productToBeDeleted
+            }
+        })
 
-    res.status(200).send('product removed from table')
-    res.end()
+        res.status(200).send('product removed from table')
+        res.end()
+    } catch (err) {
+        next(err)
+    }
 }
 
 let updateProductById = async (req, res, next) => {
@@ -100,7 +108,7 @@ let updateProductById = async (req, res, next) => {
 
     await ProductsModel.update(contentToBeUpdated, {
         where: {
-            id:id
+            id: id
         }
     })
 

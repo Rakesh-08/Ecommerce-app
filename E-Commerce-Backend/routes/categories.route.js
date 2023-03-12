@@ -13,6 +13,6 @@ categoriesRouter.post("/", categoryController.addNewCategory);
 
 categoriesRouter.delete("/:categoryId", categoryController.deleteCategoryById)
 
-categoriesRouter.put ("/:categoryId", categoryController.updateCategoryById)
+categoriesRouter.put("/:categoryId", categoryController.updateCategoryById)
 
 module.exports = categoriesRouter;
