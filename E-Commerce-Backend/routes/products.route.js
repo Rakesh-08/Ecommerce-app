@@ -1,6 +1,7 @@
 let express = require('express')
 let productsRouter = express.Router();
 let productController = require('../controller/product.controller')
+let productsValidators = require("../middlewares/ProductRequestValidaters")
 
 productsRouter.get("/", productController.getAllProducts)
 

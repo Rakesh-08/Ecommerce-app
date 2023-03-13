@@ -26,10 +26,7 @@ let getAllCategories = async (req, res, next) => {
 
 let getCategoryById = async (req, res, next) => {
   let id = req.params.categoryId;
-  if (!id) {
-    res.status(400).send("ID not passed");
-    return;
-  }
+
 
   let newCategory = await CategoryModel.findAll({
     where: {
@@ -38,6 +35,7 @@ let getCategoryById = async (req, res, next) => {
   });
   res.writeHead(200, { "content-Type": "application/json" });
   res.write(JSON.stringify(newCategory));
+
   res.end();
 };
 
@@ -46,7 +44,7 @@ let getCategoryById = async (req, res, next) => {
 let addNewCategory = async (req, res, next) => {
   let categoryToBeAdded = req.body;
 
-    await CategoryModel.create(categoryToBeAdded);
+  await CategoryModel.create(categoryToBeAdded);
 
   res.status(201).send("new category added successfully");
   res.end();
@@ -66,42 +64,43 @@ let deleteCategoryById = async (req, res, next) => {
 };
 
 let updateCategoryById = async (req, res, next) => {
-    try {
-        let id = req.params.categoryId;
-        let contentToBeUpdated = req.body;
+  let id = req.params.categoryId;
+  let contentToBeUpdated = req.body;
 
-        // if (!contentToBeUpdated.name) {
-        //     res.status(500).send('please pass the data for category to be updated')
-        //     res.end();
 
-        // }
+  try {
 
-        await CategoryModel.update({ name: contentToBeUpdated } , {
-            where: {
-                id: id,
-            },
-        });
+    // if (!contentToBeUpdated.name) {
+    //   res.status(500).send('please pass the data for category to be updated')
+    //   res.end();
 
-        let updatedCategory = await CategoryModel.findByPk(id);
-        res.send(updatedCategory).status(200);
-        res.end();
+    // }
 
-    } catch (err) {
-        
-        next(err);
-        
-    } 
- 
- 
- 
+    await CategoryModel.update(contentToBeUpdated, {
+      where: {
+        id: id
+      }
+    });
+
+    let updatedCategory = await CategoryModel.findByPk(id);
+    res.send(updatedCategory).status(200);
+    res.end()
+
+  } catch (err) {
+    next(err)
+
+  }
+
+
+
 };
 
 let CrudOnCategories = {
-    getAllCategories,
-    getCategoryById,
-    addNewCategory,
-    deleteCategoryById,
-    updateCategoryById,
+  getAllCategories,
+  getCategoryById,
+  addNewCategory,
+  deleteCategoryById,
+  updateCategoryById,
 }
 
 module.exports = CrudOnCategories;

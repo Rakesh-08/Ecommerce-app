@@ -1,5 +1,6 @@
 let ProductsModel = require('../model/Products')
 let sequelizeConnection = require('../config/db.config')
+let sequelize = require('sequelize')
 
 let createProductsTable = async () => {
     await sequelizeConnection.sync({ force: true });
@@ -41,10 +42,50 @@ let insertIntoProductsTable = async () => {
 }
 
 let getAllProducts = async (req, res, next) => {
-    let allProducts = await ProductsModel.findAll()
-    res.writeHead(200, { 'content-Type': 'application/json' })
-    res.write(JSON.stringify(allProducts))
+    let productsForCategory = req.query.categoryId;
+    let minPrice = req.query.minPrice;
+    let maxPrice = req.query.maxPrice;
+    let searchedProducts;
+    if (productsForCategory) {
+        searchedProducts = await filterByCategory(productsForCategory)
+    } else if (minPrice && maxPrice) {
+        searchedProducts = await filterByPrice(minPrice, maxPrice)
+
+    } else {
+        searchedProducts = await ProductsModel.findAll();
+    }
+
+    res.status(200).json({
+        message: 'sucess',
+        data: searchedProducts
+    })
     res.end()
+}
+
+let filterByCategory = async (id) => {
+    let products = await ProductsModel.findAll({
+        where: {
+            categoryId: id
+        }
+    })
+
+    return products;
+}
+
+let filterByPrice = async (minPrice, maxPrice) => {
+    let productInRange = await ProductsModel.findAll({
+        where: {
+            price: {
+
+                [sequelize.Op.lte]: maxPrice,
+                [sequelize.Op.gte]: minPrice
+
+            }
+        }
+    })
+
+    return productInRange
+
 }
 
 let getSelectedProduct = async (req, res, next) => {
@@ -106,14 +147,27 @@ let updateProductById = async (req, res, next) => {
     let id = req.params.productId;
     let contentToBeUpdated = req.body;
 
-    await ProductsModel.update(contentToBeUpdated, {
-        where: {
-            id: id
-        }
-    })
 
-    res.send('product details updated').status(200);
-    res.end();
+    if (!contentToBeUpdated.price) {
+        res.status(400).send({
+            message: 'please provide valid input'
+        })
+        return;
+    }
+
+    try {
+
+        await ProductsModel.update(contentToBeUpdated, {
+            where: {
+                id: id
+            }
+        })
+        let updatedProduct = await ProductsModel.findByPk(id);
+        res.send(updatedProduct).status(200);
+        res.end();
+    } catch (err) {
+        next(err)
+    }
 }
 
 module.exports = {
