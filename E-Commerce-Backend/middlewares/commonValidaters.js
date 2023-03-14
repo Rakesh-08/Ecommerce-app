@@ -1,6 +1,15 @@
+let validateReqForName = (req, res, next, msgFor) => {
+    if (!req.body.name) {
+        res.status(400).send({
+            message: msgFor + " name is required"
+        })
+        return;
+    }
+    next();
 
+}
 
-let validateReqForId = async (id, model, res, next) => {
+let validateReqForId = async (id, model, res, next, msgFor) => {
     let categoryId = id;
 
 
@@ -9,14 +18,14 @@ let validateReqForId = async (id, model, res, next) => {
 
         if (!IsCategoryThere) {
             res.status(400).send({
-                message: 'Category does not exist'
+                message: msgFor + " does not exist"
             })
             return;
 
         }
     } else {
         res.status(400).send({
-            message: 'Category id is missing'
+            message: msgFor + ' id is missing'
         })
     }
 
@@ -24,4 +33,4 @@ let validateReqForId = async (id, model, res, next) => {
 
 }
 
-module.exports = validateReqForId;
+module.exports = { validateReqForId, validateReqForName, }

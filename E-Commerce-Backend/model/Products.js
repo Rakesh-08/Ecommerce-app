@@ -23,11 +23,6 @@ let ProductsModel = sequelizeConnection.define(
         type: sequelize.DataTypes.STRING,
         notNull: true,
 
-    },
-    categoryId: {
-        type: sequelize.DataTypes.INTEGER,
-        notNull: true,
-        foreignKey: true
     }
 
 },

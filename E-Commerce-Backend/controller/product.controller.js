@@ -2,43 +2,50 @@ let ProductsModel = require('../model/Products')
 let sequelizeConnection = require('../config/db.config')
 let sequelize = require('sequelize')
 
-let createProductsTable = async () => {
-    await sequelizeConnection.sync({ force: true });
-    console.log('products table created')
-    //insertIntoProductsTable();
 
-}
+let insertIntoProductsTable = async (req, res, next) => {
 
-let insertIntoProductsTable = async () => {
     await ProductsModel.bulkCreate([
+
+
         {
-            ProductName: 'samsung s22',
-            Price: 7999,
-            description: 'samsung smartphone for mid-range budget',
-            categoryId: 2
+            "ProductName": "samsung s22",
+            "Price": 7999,
+            "description": "samsung smartphone for mid-range budget",
+            "categoryId": 2
         },
+
         {
-            ProductName: 'Full sleeve jacket',
-            Price: 1500,
-            description: 'best jacket for winter',
-            categoryId: 1
-        }, {
-            ProductName: 'L.G. Television',
-            Price: 45000,
-            description: 'L.G provides great warranty period',
-            categoryId: 5
-        }, {
-            ProductName: 'iphone 14 pro',
-            Price: 98000,
-            description: 'style means iphone 14 pro',
-            categoryId: 2
-        }, {
-            ProductName: 'ASUS laptop',
-            Price: 49999,
-            description: 'this is built for coders',
-            categoryId: 3
+            "ProductName": "Full sleeve jacket",
+            "Price": 1500,
+            "description": "best jackets for winter",
+            "categoryId": 1
+        },
+
+        {
+            "ProductName": "L.G. Television",
+            "Price": 45000,
+            "description": "LG provides great warranty services",
+            "categoryId": 3
+        },
+
+        {
+            "ProductName": "I-Phone 13",
+            "Price": 88999,
+            "description": "class means having an i phone",
+            "categoryId": 2
+        },
+
+        {
+            "ProductName": "ASUS laptop",
+            "Price": 49999,
+            "description": "Coders first choice",
+            "categoryId": 5
         }
     ])
+
+    res.status(201).send('products added in the table')
+    res.end()
 }
 
 let getAllProducts = async (req, res, next) => {
@@ -46,13 +53,28 @@ let getAllProducts = async (req, res, next) => {
     let minPrice = req.query.minPrice;
     let maxPrice = req.query.maxPrice;
     let searchedProducts;
-    if (productsForCategory) {
-        searchedProducts = await filterByCategory(productsForCategory)
-    } else if (minPrice && maxPrice) {
-        searchedProducts = await filterByPrice(minPrice, maxPrice)
-
-    } else {
+    if (Object.keys(req.query).length === 0) {
         searchedProducts = await ProductsModel.findAll();
+    } else if (productsForCategory) {
+        searchedProducts = await ProductsModel.findAll({
+            where: {
+                [sequelize.Op.and]: [
+                    {
+                        categoryId: productsForCategory
+                    },
+                    {
+                        price: {
+
+                            [sequelize.Op.lte]: maxPrice || Number.MAX_VALUE,
+                            [sequelize.Op.gte]: minPrice || 0
+
+                        }
+                    }
+                ]
+            }
+        })
+    } else {
+        searchedProducts = await filterByPrice(minPrice, maxPrice)
     }
 
     res.status(200).json({
@@ -62,23 +84,14 @@ let getAllProducts = async (req, res, next) => {
     res.end()
 }
 
-let filterByCategory = async (id) => {
-    let products = await ProductsModel.findAll({
-        where: {
-            categoryId: id
-        }
-    })
-
-    return products;
-}
 
 let filterByPrice = async (minPrice, maxPrice) => {
     let productInRange = await ProductsModel.findAll({
         where: {
             price: {
 
-                [sequelize.Op.lte]: maxPrice,
-                [sequelize.Op.gte]: minPrice
+                [sequelize.Op.lte]: maxPrice || Number.MAX_VALUE,
+                [sequelize.Op.gte]: minPrice || 0
 
             }
         }
@@ -91,12 +104,7 @@ let filterByPrice = async (minPrice, maxPrice) => {
 let getSelectedProduct = async (req, res, next) => {
     let id = req.params.productId;
 
-    if (!id) {
-        if (!id) {
-            res.status(400).send("ID not passed")
-            return
-        }
-    }
+
     let selctedProduct = await ProductsModel.findAll({
         where: {
             id: id
@@ -108,12 +116,11 @@ let getSelectedProduct = async (req, res, next) => {
     res.end()
 }
 
-//createProductsTable();
 
-let addNewProduct = async (req, res, next) => {
+let addNewProducts = async (req, res, next) => {
     let productToBeAdded = req.body;
 
-    await ProductsModel.create(
+    await ProductsModel.bulkCreate(
         productToBeAdded
     )
 
@@ -174,9 +181,9 @@ module.exports = {
 
     getAllProducts,
     getSelectedProduct,
-    addNewProduct,
+    addNewProducts,
     deleteProductById,
-    updateProductById
+    updateProductById, insertIntoProductsTable
 }
 
 

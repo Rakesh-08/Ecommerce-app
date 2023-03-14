@@ -5,13 +5,13 @@ let productsValidators = require("../middlewares/ProductRequestValidaters")
 
 productsRouter.get("/", productController.getAllProducts)
 
-productsRouter.get("/:productId", productController.getSelectedProduct);
+productsRouter.get("/:productId", [productsValidators.validateReqForProductsId], productController.getSelectedProduct);
 
-productsRouter.post("/", productController.addNewProduct);
+productsRouter.post("/", [productsValidators.validateReqForProductName], productController.addNewProducts);
 
-productsRouter.delete("/:productId", productController.deleteProductById)
+productsRouter.delete("/:productId", [productsValidators.validateReqForProductsId], productController.deleteProductById)
 
-productsRouter.put("/:productId", productController.updateProductById)
+productsRouter.put("/:productId", [productsValidators.validateReqForProductsId, productsValidators.validateReqForProductName], productController.updateProductById)
 
 
 

@@ -1,19 +1,15 @@
 let CategoryModel = require('../model/Category');
-let validateReqForId = require('./commonValidaters')
+let commonValidators = require('./commonValidaters')
 
 
 
 const validateReqForCategoryName = (req, res, next) => {
-    if (!req.body.name) {
-        res.status(400).send({
-            message: "Category name is required"
-        })
-    }
-    next();
+    commonValidators.validateReqForName(req, res, next, 'category')
 }
 
-const validateReqForCategoryId = async (req, res, next) => {
-    validateReqForId(req.params.categoryId, CategoryModel, res, next)
+const validateReqForCategoryId = async (req, res, next,) => {
+    let categoryId = req.params.categoryId;
+    await commonValidators.validateReqForId(categoryId, CategoryModel, res, next, 'category')
 }
 
 module.exports = {
