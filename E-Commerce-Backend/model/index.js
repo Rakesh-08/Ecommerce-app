@@ -2,6 +2,15 @@ let db = {};
 
 db.RolesModel = require('./Roles')
 db.UserModel = require('./User')
+db.CartModel = require('./Cart');
+db.ProductModel = require('./Products')
+
+
+db.UserModel.belongsToMany(db.RolesModel, {
+    through: "user_roles",
+    foreignKey: "userId",
+    otherKey: "roleId"
+});
 
 db.RolesModel.belongsToMany(db.UserModel, {
     through: "user_roles",
@@ -10,10 +19,16 @@ db.RolesModel.belongsToMany(db.UserModel, {
 
 })
 
-db.UserModel.belongsToMany(db.RolesModel, {
-    through: "user_roles",
-    foreignKey: "userId",
-    otherKey: "roleId"
+db.ProductModel.belongsToMany(db.CartModel, {
+    through: "cart_products",
+    forignKey: "productId",
+    otherKey: "cartId",
+})
+
+db.CartModel.belongsToMany(db.ProductModel, {
+    through: "cart_products",
+    forignKey: "cartId",
+    otherKey: "productId",
 })
 
 db.Roles = ["user", "admin"]

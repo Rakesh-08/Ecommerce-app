@@ -2,8 +2,10 @@ let express = require('express')
 let productsRouter = express.Router();
 let productController = require('../controller/product.controller')
 let productsValidators = require("../middlewares/ProductRequestValidaters")
+let authJwt = require('../middlewares/auth.jwt')
 
-productsRouter.get("/", productController.getAllProducts)
+
+productsRouter.get("/", [authJwt.verifyToken], productController.getAllProducts)
 
 productsRouter.get("/:productId", [productsValidators.validateReqForProductsId], productController.getSelectedProduct);
 
