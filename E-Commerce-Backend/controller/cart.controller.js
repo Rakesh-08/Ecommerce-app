@@ -1,10 +1,11 @@
-const { CartModel, ProductModel } = require("../model")
+const { CartModel, ProductModel } = require("../model");
+
 
 let createCart = async (req, res, next) => {
     let cost = req.body;
 
     try {
-        await CartModel.create(cost);
+        await CartModel.create(cost || { "cost": 0 });
 
         res.status(200).json({
             message: "Cart created "
@@ -23,7 +24,7 @@ let updateCart = async (req, res, next) => {
     let cartToBeUpdated = await CartModel.findByPk(cartId)
 
     if (cartToBeUpdated) {
-        let productsToAdd = await ProductModel.findAll({
+        var productsToAdd = await ProductModel.findAll({
             where: {
                 id: req.body.productIds,
             }
@@ -31,19 +32,19 @@ let updateCart = async (req, res, next) => {
     }
 
     if (productsToAdd) {
-        await cartToBeUpdated.setProductModel(productsToadd)
+        await cartToBeUpdated.setProducts(productsToAdd);
         console.log('products added');
 
         let totalCost = 0;
         let productSelected = [];
-        let products = await cartToBeUpdated.getProductModel();
+        let products = await cartToBeUpdated.getProducts();
 
         for (let i = 0; i < products.length; i++) {
-            totalCost = totalCost + products[i].price;
+            totalCost = totalCost + products[i].Price;
             productSelected.push({
                 id: products[i].id,
-                name: products[i].name,
-                cost: products[i].price,
+                name: products[i].ProductName,
+                cost: products[i].Price,
             })
         }
 
@@ -58,6 +59,36 @@ let updateCart = async (req, res, next) => {
 
 }
 
-module.exports = { createCart, updateCart }
+
+let getCart = async (req, res, next) => {
+
+    let cart = await CartModel.findByPk(req.params.cartId);
+
+    let totalCost = 0;
+    let productsSelected = [];
+
+    let productsInCart = await cart.getProducts();
+
+    for (let i = 0; i < productsInCart.length; i++) {
+
+        totalCost += productsInCart[i].Price;
+        productsSelected.push({
+            id: productsInCart[i].id,
+            name: productsInCart[i].ProductName,
+            cost: productsInCart[i].Price,
+        })
+    }
+
+    res.status(200).json({
+        id: cart.id,
+        productsSelected,
+        totalCost
+    })
+
+}
+
+module.exports = {
+    createCart, updateCart, getCart
+}
 
 

@@ -9,7 +9,7 @@ productsRouter.get("/", [authJwt.verifyToken], productController.getAllProducts)
 
 productsRouter.get("/:productId", [productsValidators.validateReqForProductsId], productController.getSelectedProduct);
 
-productsRouter.post("/", [productsValidators.validateReqForProductName], productController.addNewProducts);
+productsRouter.post("/", productController.addNewProducts);
 
 productsRouter.delete("/:productId", [productsValidators.validateReqForProductsId], productController.deleteProductById)
 
