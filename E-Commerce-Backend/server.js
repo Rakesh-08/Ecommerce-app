@@ -5,15 +5,13 @@ let router = require('./routes/index')
 let bodyParser = require('body-parser');
 let ErrorHandler = require('./middlewares/ErrorHandler');
 let sequelizeConnection = require("./config/db.config");
-let CategoryModel = require("./model/Category.js")
-let ProductsModel = require("./model/Products")
-let RolesModel = require('./model/Roles')
+let db = require("./model/index");
 
 expressApp.use(bodyParser.json())
 expressApp.use(router);
 expressApp.use(ErrorHandler)
 
-CategoryModel.hasMany(ProductsModel);
+db.CategoryModel.hasMany(db.ProductModel);
 
 let initDb = async () => {
     await sequelizeConnection.sync({ force: true });
@@ -24,7 +22,7 @@ let initDb = async () => {
 
 
 let insertIntoCategoryTable = async () => {
-    await CategoryModel.bulkCreate([
+    await db.CategoryModel.bulkCreate([
         { name: "Fashion" },
         { name: "Mobiles" },
         { name: "Electronics" },
@@ -34,7 +32,7 @@ let insertIntoCategoryTable = async () => {
 };
 
 let insertRoles = async () => {
-    RolesModel.bulkCreate([{
+    await db.RolesModel.bulkCreate([{
         id: 1,
         name: "user",
     }, {

@@ -1,9 +1,13 @@
+let sequelize = require('sequelize')
 let db = {};
+
+db.sequelize = sequelize;
 
 db.RolesModel = require('./Roles')
 db.UserModel = require('./User')
 db.CartModel = require('./Cart');
-db.ProductModel = require('./Products')
+db.ProductModel = require('./Products');
+db.CategoryModel = require('./Category')
 
 
 db.UserModel.belongsToMany(db.RolesModel, {

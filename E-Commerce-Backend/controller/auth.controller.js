@@ -1,23 +1,22 @@
-const { UserModel, RolesModel } = require("../model/index");
+const db = require("../model/index");
 let jwt = require('jsonwebtoken');
 let bcrypt = require('bcryptjs');
-let sequelize = require('sequelize')
 let authConfig = require('../config/auth.config');
 
 
 
 let signup = async (req, res) => {
-    let user = await UserModel.create({
+    let user = await db.UserModel.create({
         username: req.body.username,
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 8)
     });
 
     if (req.body.roles.length !== 0) {
-        var roles = await RolesModel.findAll({
+        var roles = await db.RolesModel.findAll({
             where: {
                 name: {
-                    [sequelize.Op.or]: req.body.roles,
+                    [db.sequelize.Op.or]: req.body.roles,
                 }
             }
         })
@@ -41,7 +40,7 @@ let signin = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
 
-    let existingUser = await UserModel.findOne({
+    let existingUser = await db.UserModel.findOne({
         where: {
             username: username,
         }

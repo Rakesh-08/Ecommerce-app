@@ -1,11 +1,10 @@
-const { CartModel, ProductModel } = require("../model");
-
+let db = require('../model/index')
 
 let createCart = async (req, res, next) => {
     let cost = req.body;
 
     try {
-        await CartModel.create(cost || { "cost": 0 });
+        await db.CartModel.create(cost || { "cost": 0 });
 
         res.status(200).json({
             message: "Cart created "
@@ -21,10 +20,10 @@ let createCart = async (req, res, next) => {
 let updateCart = async (req, res, next) => {
     const cartId = req.params.cartId;
 
-    let cartToBeUpdated = await CartModel.findByPk(cartId)
+    let cartToBeUpdated = await db.CartModel.findByPk(cartId)
 
     if (cartToBeUpdated) {
-        var productsToAdd = await ProductModel.findAll({
+        var productsToAdd = await db.ProductModel.findAll({
             where: {
                 id: req.body.productIds,
             }
@@ -62,7 +61,7 @@ let updateCart = async (req, res, next) => {
 
 let getCart = async (req, res, next) => {
 
-    let cart = await CartModel.findByPk(req.params.cartId);
+    let cart = await db.CartModel.findByPk(req.params.cartId);
 
     let totalCost = 0;
     let productsSelected = [];

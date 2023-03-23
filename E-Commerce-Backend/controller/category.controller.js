@@ -1,8 +1,8 @@
-let CategoryModel = require("../model/Category");
+let db = require("../model/index")
 
 
 let getAllCategories = async (req, res, next) => {
-  let categories = await CategoryModel.findAll();
+  let categories = await db.CategoryModel.findAll();
   res.writeHead(200, { "content-Type": "application/json" });
   res.write(JSON.stringify(categories));
   res.end();
@@ -12,7 +12,7 @@ let getCategoryById = async (req, res, next) => {
   let id = req.params.categoryId;
 
 
-  let newCategory = await CategoryModel.findAll({
+  let newCategory = await db.CategoryModel.findAll({
     where: {
       id: id,
     },
@@ -28,7 +28,7 @@ let getCategoryById = async (req, res, next) => {
 let addNewCategory = async (req, res, next) => {
   let categoryToBeAdded = req.body;
 
-  await CategoryModel.bulkCreate(categoryToBeAdded);
+  await db.CategoryModel.bulkCreate(categoryToBeAdded);
 
   res.status(201).send("new category added successfully");
   res.end();
@@ -37,7 +37,7 @@ let addNewCategory = async (req, res, next) => {
 let deleteCategoryById = async (req, res, next) => {
   let CategoryidToBeDeleted = req.params.categoryId;
 
-  await CategoryModel.destroy({
+  await db.CategoryModel.destroy({
     where: {
       id: CategoryidToBeDeleted,
     },
@@ -60,13 +60,13 @@ let updateCategoryById = async (req, res, next) => {
 
     // }
 
-    await CategoryModel.update(contentToBeUpdated, {
+    await db.CategoryModel.update(contentToBeUpdated, {
       where: {
         id: id
       }
     });
 
-    let updatedCategory = await CategoryModel.findByPk(id);
+    let updatedCategory = await db.CategoryModel.findByPk(id);
     res.send(updatedCategory).status(200);
     res.end()
 

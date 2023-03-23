@@ -1,11 +1,11 @@
-let ProductsModel = require('../model/Products')
+let db = require('../model/index')
 let sequelizeConnection = require('../config/db.config')
-let sequelize = require('sequelize')
+
 
 
 let insertIntoProductsTable = async (req, res, next) => {
 
-    await ProductsModel.bulkCreate([
+    await db.ProductModel.bulkCreate([
 
 
         {
@@ -54,19 +54,19 @@ let getAllProducts = async (req, res, next) => {
     let maxPrice = req.query.maxPrice;
     let searchedProducts;
     if (Object.keys(req.query).length === 0) {
-        searchedProducts = await ProductsModel.findAll();
+        searchedProducts = await db.ProductModel.findAll();
     } else if (productsForCategory) {
-        searchedProducts = await ProductsModel.findAll({
+        searchedProducts = await db.ProductModel.findAll({
             where: {
-                [sequelize.Op.and]: [
+                [db.sequelize.Op.and]: [
                     {
                         categoryId: productsForCategory
                     },
                     {
                         price: {
 
-                            [sequelize.Op.lte]: maxPrice || Number.MAX_VALUE,
-                            [sequelize.Op.gte]: minPrice || 0
+                            [db.sequelize.Op.lte]: maxPrice || Number.MAX_VALUE,
+                            [db.sequelize.Op.gte]: minPrice || 0
 
                         }
                     }
@@ -86,12 +86,12 @@ let getAllProducts = async (req, res, next) => {
 
 
 let filterByPrice = async (minPrice, maxPrice) => {
-    let productInRange = await ProductsModel.findAll({
+    let productInRange = await db.ProductModel.findAll({
         where: {
             price: {
 
-                [sequelize.Op.lte]: maxPrice || Number.MAX_VALUE,
-                [sequelize.Op.gte]: minPrice || 0
+                [db.sequelize.Op.lte]: maxPrice || Number.MAX_VALUE,
+                [db.sequelize.Op.gte]: minPrice || 0
 
             }
         }
@@ -105,7 +105,7 @@ let getSelectedProduct = async (req, res, next) => {
     let id = req.params.productId;
 
 
-    let selctedProduct = await ProductsModel.findAll({
+    let selctedProduct = await db.ProductModel.findAll({
         where: {
             id: id
         }
@@ -120,7 +120,7 @@ let getSelectedProduct = async (req, res, next) => {
 let addNewProducts = async (req, res, next) => {
     let productToBeAdded = req.body;
 
-    await ProductsModel.bulkCreate(
+    await db.ProductModel.bulkCreate(
         productToBeAdded
     )
 
@@ -131,13 +131,13 @@ let addNewProducts = async (req, res, next) => {
 
 let deleteProductById = async (req, res, next) => {
     let productToBeDeleted = req.params.productId;
-    let IsProductThere = await ProductsModel.findByPk(productToBeDeleted);
+    let IsProductThere = await db.ProductModel.findByPk(productToBeDeleted);
 
     try {
         if (!IsProductThere) {
             throw new Error("Category not found")
         }
-        await ProductsModel.destroy({
+        await db.ProductModel.destroy({
             where: {
                 id: productToBeDeleted
             }
@@ -164,12 +164,12 @@ let updateProductById = async (req, res, next) => {
 
     try {
 
-        await ProductsModel.update(contentToBeUpdated, {
+        await db.ProductModel.update(contentToBeUpdated, {
             where: {
                 id: id
             }
         })
-        let updatedProduct = await ProductsModel.findByPk(id);
+        let updatedProduct = await db.ProductModel.findByPk(id);
         res.send(updatedProduct).status(200);
         res.end();
     } catch (err) {

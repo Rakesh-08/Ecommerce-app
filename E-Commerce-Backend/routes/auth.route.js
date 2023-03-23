@@ -1,4 +1,5 @@
 let express = require('express');
+let expressApp = express();
 let authRoute = express.Router();
 let authController = require('../controller/auth.controller')
 let authValidators = require('../middlewares/authRequestValidator')
