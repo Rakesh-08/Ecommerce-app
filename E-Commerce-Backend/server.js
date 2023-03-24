@@ -4,7 +4,6 @@ let expressApp = express();
 let router = require('./routes/index')
 let bodyParser = require('body-parser');
 let ErrorHandler = require('./middlewares/ErrorHandler');
-let sequelizeConnection = require("./config/db.config");
 let db = require("./model/index");
 
 expressApp.use(bodyParser.json())
@@ -14,7 +13,7 @@ expressApp.use(ErrorHandler)
 db.CategoryModel.hasMany(db.ProductModel);
 
 let initDb = async () => {
-    await sequelizeConnection.sync({ force: true });
+    await db.sequelizeConnection.sync({ force: true });
 
     insertIntoCategoryTable();
     insertRoles();

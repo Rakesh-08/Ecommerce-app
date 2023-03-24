@@ -4,7 +4,7 @@ let createCart = async (req, res, next) => {
     let cost = req.body;
 
     try {
-        await db.CartModel.create(cost || { "cost": 0 });
+        await db.CartModel.create(cost && Object.keys(cost).length !== 0 || { "cost": 0 });
 
         res.status(200).json({
             message: "Cart created "

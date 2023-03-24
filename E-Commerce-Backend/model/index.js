@@ -1,13 +1,37 @@
-let sequelize = require('sequelize')
+const sequelize = require('sequelize');
+const env = process.env.NODE_ENV || "development";
+const dbConfig = require('../config/db.config')[env];
+
 let db = {};
 
 db.sequelize = sequelize;
 
-db.RolesModel = require('./Roles')
-db.UserModel = require('./User')
-db.CartModel = require('./Cart');
-db.ProductModel = require('./Products');
-db.CategoryModel = require('./Category')
+db.sequelizeConnection = new sequelize(
+    dbConfig.DB,
+    dbConfig.USER,
+    dbConfig.PASSWORD,
+
+    {
+        host: dbConfig.HOST,
+        dialect: dbConfig.dialect,
+        operatorsAliases: 0,
+
+        pool: {
+            max: dbConfig.pool.max,
+            min: dbConfig.pool.min,
+            acquire: dbConfig.pool.acquire,
+            idle: dbConfig.pool.idle
+        }
+
+
+    }
+)
+
+db.RolesModel = require('./Roles')(sequelize, db.sequelizeConnection)
+db.UserModel = require('./User')(sequelize, db.sequelizeConnection);
+db.CartModel = require('./Cart')(sequelize, db.sequelizeConnection);
+db.ProductModel = require('./Products')(sequelize, db.sequelizeConnection)
+db.CategoryModel = require('./Category')(sequelize, db.sequelizeConnection)
 
 
 db.UserModel.belongsToMany(db.RolesModel, {

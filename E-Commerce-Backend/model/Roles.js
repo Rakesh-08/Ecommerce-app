@@ -1,5 +1,5 @@
 
-module.exports = (seqelize, sequelizeConnection) => {
+module.exports = (sequelize, sequelizeConnection) => {
 
 
     const RolesModel = sequelizeConnection.define("roles", {
@@ -15,7 +15,7 @@ module.exports = (seqelize, sequelizeConnection) => {
 
     }
     )
-
+    return RolesModel;
 
 }
 

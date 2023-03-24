@@ -1,35 +1,35 @@
-let sequelize = require('sequelize');
-let sequelizeConnection = require('../config/db.config');
+
+module.exports = (sequelize, sequelizeConnection) => {
 
 
-let ProductsModel = sequelizeConnection.define(
-    'Products', {
-    id: {
-        type: sequelize.DataTypes.BIGINT,
-        notNull: true,
-        autoIncrement: true,
-        primaryKey: true
+    let ProductsModel = sequelizeConnection.define(
+        'Products', {
+        id: {
+            type: sequelize.DataTypes.BIGINT,
+            notNull: true,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        ProductName: {
+            type: sequelize.DataTypes.STRING,
+            notNull: true,
+
+        },
+        Price: {
+            notNull: true,
+            type: sequelize.DataTypes.INTEGER
+        },
+        description: {
+            type: sequelize.DataTypes.STRING,
+            notNull: true,
+
+        }
+
     },
-    ProductName: {
-        type: sequelize.DataTypes.STRING,
-        notNull: true,
+        {
+            timestamps: false
+        }
+    )
 
-    },
-    Price: {
-        notNull: true,
-        type: sequelize.DataTypes.INTEGER
-    },
-    description: {
-        type: sequelize.DataTypes.STRING,
-        notNull: true,
-
-    }
-
-},
-    {
-        timestamps: false
-    }
-)
-
-
-module.exports = ProductsModel;
+    return ProductsModel;
+}
