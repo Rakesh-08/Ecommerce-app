@@ -1,6 +1,6 @@
 const { mockRequest, mockResponse } = require("../interceptor");
-const db = require('../../../model/index')
-
+const db = require('../../../model/index');
+const productController = require('../../../controller/product.controller')
 
 describe("product controller", () => {
     let req, res;
@@ -25,7 +25,7 @@ describe("product controller", () => {
         );
 
         req.body = testPayload;
-        await db.ProductModel.bulkCreate();
+        await productController.addNewProducts(req, res);
 
         expect(spy).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(201);

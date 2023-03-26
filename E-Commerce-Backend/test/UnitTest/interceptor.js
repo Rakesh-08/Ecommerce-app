@@ -20,5 +20,8 @@ module.exports = {
         res.write = jest.fn().mockReturnValue(res);
         res.end = jest.fn();
         res.writeHead = jest.fn().mockReturnValue(res);
+
+        return res;
+
     }
 }

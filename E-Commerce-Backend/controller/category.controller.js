@@ -2,36 +2,48 @@ let db = require("../model/index")
 
 
 let getAllCategories = async (req, res, next) => {
-  let categories = await db.CategoryModel.findAll();
-  res.writeHead(200, { "content-Type": "application/json" });
-  res.write(JSON.stringify(categories));
-  res.end();
+
+  try {
+    let categories = await db.CategoryModel.findAll();
+    res.status(200).json(categories);
+  } catch (err) {
+    res.status(400).send('some internal error occurred')
+  }
+
 };
 
 let getCategoryById = async (req, res, next) => {
-  let id = req.params.categoryId;
+
+  try {
+    let id = req.params.categoryId;
+    let newCategory = await db.CategoryModel.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    res.status(200).json(newCategory)
 
 
-  let newCategory = await db.CategoryModel.findAll({
-    where: {
-      id: id,
-    },
-  });
-  res.writeHead(200, { "content-Type": "application/json" });
-  res.write(JSON.stringify(newCategory));
-
-  res.end();
+  } catch (err) {
+    res.status(400).json({
+      message: 'internal error'
+    })
+  }
 };
 
 
 
 let addNewCategory = async (req, res, next) => {
-  let categoryToBeAdded = req.body;
+  try {
+    let categoryToBeAdded = req.body;
 
-  await db.CategoryModel.bulkCreate(categoryToBeAdded);
+    await db.CategoryModel.bulkCreate(categoryToBeAdded);
 
-  res.status(201).send("new category added successfully");
-  res.end();
+    res.status(201).send(categoryToBeAdded);
+  } catch (err) {
+    res.status(400).send('internal error occurred')
+  }
 };
 
 let deleteCategoryById = async (req, res, next) => {
@@ -48,11 +60,12 @@ let deleteCategoryById = async (req, res, next) => {
 };
 
 let updateCategoryById = async (req, res, next) => {
-  let id = req.params.categoryId;
-  let contentToBeUpdated = req.body;
-
 
   try {
+    let id = req.params.categoryId;
+    let contentToBeUpdated = req.body;
+
+
 
     // if (!contentToBeUpdated.name) {
     //   res.status(500).send('please pass the data for category to be updated')

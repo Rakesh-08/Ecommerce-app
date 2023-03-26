@@ -120,12 +120,12 @@ let getSelectedProduct = async (req, res, next) => {
 let addNewProducts = async (req, res, next) => {
     let productToBeAdded = req.body;
     try {
-        await db.ProductModel.create(productToBeAdded)
+        await db.ProductModel.bulkCreate(productToBeAdded)
 
-        res.status(201).send('product added in the table')
+        res.status(201).json(productToBeAdded)
         res.end()
     } catch (err) {
-        res.status(500).send('internal server error')
+        res.status(500).json({ message: 'internal server error' })
         res.end();
     }
 
