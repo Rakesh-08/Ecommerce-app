@@ -105,15 +105,13 @@ let getSelectedProduct = async (req, res, next) => {
     let id = req.params.productId;
 
 
-    let selctedProduct = await db.ProductModel.findAll({
+    let selctedProduct = await db.ProductModel.findByPk({
         where: {
             id: id
         }
     })
 
-    res.writeHead(200, { 'content-Type': 'application/json' })
-    res.write(JSON.stringify(selctedProduct))
-    res.end()
+    res.status(200).json(selctedProduct)
 }
 
 
@@ -157,8 +155,8 @@ let updateProductById = async (req, res, next) => {
     let contentToBeUpdated = req.body;
 
 
-    if (!contentToBeUpdated.price) {
-        res.status(400).send({
+    if (!contentToBeUpdated.Price) {
+        res.status(400).json({
             message: 'please provide valid input'
         })
         return;
