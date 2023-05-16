@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "bakcend for ecommerce website",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --coverage",
     "migrate": "npx sequelize-cli db:migrate",
