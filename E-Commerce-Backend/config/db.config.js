@@ -3,7 +3,7 @@ const developmentInstance = {
     DB: "ecomm_db",
     USER: "root",
     PASSWORD: "Rakesh@08",
-    HOST: 0.0.0.0,
+    HOST: "0.0.0.0",
     dialect: "mysql",
     operatorAliases: 0,
     pool: {
